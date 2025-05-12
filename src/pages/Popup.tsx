@@ -578,7 +578,7 @@ const Popup = () => {
                 Cancel
               </button>
               <button
-                className="bg-purple-400 text-white px-4 py-1 w-fit rounded hover:bg-purple-600 focus:outline-none"
+                className="bg-purple-500 text-white px-4 py-1 w-fit rounded hover:bg-purple-600 focus:outline-none"
                 onClick={generateAndStore}
               >
                 Confirm
