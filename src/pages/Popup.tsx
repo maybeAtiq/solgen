@@ -112,7 +112,6 @@ const Popup = () => {
           window.location.reload();
         }
       } catch (err) {
-        console.error('Session check failed:', err);
         window.location.reload();
       }
     };
@@ -129,7 +128,6 @@ const Popup = () => {
     try {
       // Check if we have encrypted wallet data
       if (!wallets_encrypted) {
-        console.log('No wallet data found in storage');
         setWallets([]);
         return;
       }
@@ -145,19 +143,15 @@ const Popup = () => {
             throw new Error('Encrypted data is not a valid string');
           }
 
-          console.log('Attempting to decrypt data...');
           const decrypted = await decryptData(wallets_encrypted, auth_pass);
-          console.log('Decryption successful');
           let parsed;
           try {
             parsed = JSON.parse(decrypted);
           } catch (parseErr) {
-            console.error('Failed to parse decrypted data:', parseErr);
             throw new Error('Invalid wallet data format after decryption');
           }
           
           if (!Array.isArray(parsed)) {
-            console.error('Parsed data is not an array:', parsed);
             throw new Error('Invalid wallet data format - expected array');
           }
           
@@ -175,7 +169,6 @@ const Popup = () => {
                   const balance = await getSolBalance(wallet.address);
                   wallet.balance = balance;
                 } catch (err) {
-                  console.error('Failed to load balance:', err);
                   wallet.balance = 0;
                 }
               }
@@ -183,10 +176,8 @@ const Popup = () => {
             setWallets(prev => [...prev, ...batch]);
             await new Promise(resolve => setTimeout(resolve, 50));
           }
-          console.log('Wallet data loaded successfully');
           return;
         } catch (decryptErr) {
-          console.error(`Decryption attempt ${retryCount + 1} failed:`, decryptErr);
           retryCount++;
           if (retryCount === maxRetries) {
             throw decryptErr;
@@ -195,7 +186,6 @@ const Popup = () => {
         }
       }
     } catch (err: any) {
-      console.error('Failed to load wallets:', err);
       // Set empty wallets array to start fresh
       setWallets([]);
       toast.error(err.message || 'Failed to load wallets. Please restart SolGen.');
@@ -214,7 +204,6 @@ const Popup = () => {
           const balance = await getSolBalance(wallet.address);
           return { ...wallet, balance };
         } catch (err) {
-          console.error('Failed to load balance:', err);
           return { ...wallet, balance: 0 };
         }
       }));
@@ -234,7 +223,6 @@ const Popup = () => {
       setSaving(false);
       toast.success('New wallets generated successfully!');
     } catch (err: any) {
-      console.error('Failed to generate wallets:', err);
       toast.error(err.message || 'Failed to generate wallets');
       setSaving(false);
     } finally {
@@ -254,7 +242,6 @@ const Popup = () => {
         await saveData('wallets_encrypted', encrypted);
         toast.success("Seed deleted successfully");
       } catch (err) {
-        console.error("Failed to delete seed:", err);
         toast.error("Failed to delete seed");
       } finally {
         setSaving(false);
@@ -282,7 +269,6 @@ const Popup = () => {
       await saveData('wallets_encrypted', encrypted);
       toast.success("Wallet deleted successfully");
     } catch (err) {
-      console.error("Failed to delete wallet:", err);
       toast.error("Failed to delete wallet");
     } finally {
       setSaving(false);
@@ -333,7 +319,6 @@ const Popup = () => {
     } catch (err: any) {
       toast.remove(toastId);
       toast.error(err.message || "Transaction failed");
-      console.error("Transaction error:", err);
     } finally {
       setShowDepositModal(false);
     }
@@ -378,7 +363,6 @@ const Popup = () => {
           const balance = await getSolBalance(wallet.address);
           return { ...wallet, balance };
         } catch (err) {
-          console.error('Failed to load balance:', err);
           return { ...wallet, balance: 0 };
         }
       }));
@@ -399,7 +383,6 @@ const Popup = () => {
       toast.success('Seed phrase successfully recovered!');
     } catch (err) {
       toast.error('Recovery failed. Please try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -411,11 +394,9 @@ const Popup = () => {
       // Remove "(imported)" text if it's a seed phrase
       const cleanedText = text.replace(' (imported)', '');
       await navigator.clipboard.writeText(cleanedText);
-      console.log('copied to clipboard:', cleanedText);
       toast.success('successfully copied!');
     } catch (err) {
       toast.error('Failed to copy, Please try again.');
-      console.error('Failed to copy:', err);
     } 
   };
 
@@ -468,7 +449,6 @@ const Popup = () => {
             }
           }
         } catch (err: any) {
-          console.error(`Failed to withdraw from ${wallet.address}:`, err);
           toast.error(`Failed to withdraw from ${wallet.address.slice(0, 4)}...`);
         }
       }
@@ -492,7 +472,6 @@ const Popup = () => {
         try {
           wallet.balance = await getSolBalance(wallet.address);
         } catch (err) {
-          console.error(`Failed to get balance for ${wallet.address}:`, err);
         }
       });
       await Promise.all(balancePromises);
@@ -511,13 +490,11 @@ const Popup = () => {
           try {
             wallet.balance = await getSolBalance(wallet.address);
           } catch (err) {
-            console.error('Failed to refresh balance:', err);
           }
         }
         setWallets(updatedWallets);
       }
     } catch (err) {
-      console.error('Failed to refresh balances:', err);
     } finally {
       toast.remove(toastId);
     }

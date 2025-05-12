@@ -44,22 +44,17 @@ export const refreshConnection = () => {
         commitment: 'confirmed',
         confirmTransactionInitialTimeout: 60000,
     });
-    console.log("Connection refreshed. Using endpoint:", RPC_ENDPOINTS[currentEndpointIndex]);
 };
 
 // Function to switch to the next endpoint if one fails
 const switchToNextEndpoint = () => {
     currentEndpointIndex = (currentEndpointIndex + 1) % RPC_ENDPOINTS.length;
-    console.log(`Switching to RPC endpoint: ${RPC_ENDPOINTS[currentEndpointIndex]}`);
     connection = new Connection(RPC_ENDPOINTS[currentEndpointIndex], {
         commitment: 'confirmed',
         confirmTransactionInitialTimeout: 60000,
     });
 };
 
-// Log available endpoints on startup
-console.log("Available RPC endpoints:", RPC_ENDPOINTS);
-console.log("Starting with endpoint:", RPC_ENDPOINTS[currentEndpointIndex]);
 
 // Request throttling configuration
 // Get delay from config or use default
@@ -81,7 +76,6 @@ const delayRequest = async () => {
     
     if (timeSinceLastRequest < DELAY_BETWEEN_REQUESTS && lastRequestTime !== 0) {
         const delayTime = DELAY_BETWEEN_REQUESTS - timeSinceLastRequest;
-        console.log(`Delaying request by ${delayTime}ms to avoid rate limiting`);
         await new Promise(resolve => setTimeout(resolve, delayTime));
     }
     
@@ -99,22 +93,16 @@ export async function getSolBalance(address: string): Promise<number> {
             
             // Validate the address format
             if (!address || address.trim() === '') {
-                console.error("Invalid address provided:", address);
                 throw new Error("Invalid address format");
             }
             
-            console.log(`Fetching balance for address: ${address} (attempt ${attempts + 1}/${maxAttempts})`);
-            console.log(`Using endpoint: ${RPC_ENDPOINTS[currentEndpointIndex]}`);
             
             const publicKey = new PublicKey(address);
             const balance = await connection.getBalance(publicKey);
             
-            console.log(`Balance received for ${address}: ${balance} lamports (${balance / LAMPORTS_PER_SOL} SOL)`);
             
             return balance / LAMPORTS_PER_SOL;
         } catch (err: any) {
-            console.error(`Error fetching balance (attempt ${attempts + 1}/${maxAttempts}):`, err);
-            console.error(`Error details:`, JSON.stringify(err, null, 2));
             
             // Check if this is a rate limit or forbidden error
             if (err.message && (
@@ -124,7 +112,6 @@ export async function getSolBalance(address: string): Promise<number> {
                 err.message.includes('Too many requests') ||
                 err.message.includes('Rate limit')
             )) {
-                console.log("Rate limit or access error detected, switching endpoint...");
                 switchToNextEndpoint();
                 attempts++;
                 // Small delay before retry
@@ -204,10 +191,8 @@ export const sendSolBatch = async (fromPrivateKey: string, recipients: string[],
                 }
             );
     
-            console.log("Batch transfer completed, Signature:", signature);
             return signature;
         } catch (err: any) {
-            console.error(`Error sending transaction (attempt ${attempts + 1}/${maxAttempts}):`, err);
             
             // Check if this is a rate limit or forbidden error
             if (err.message && (
@@ -217,7 +202,6 @@ export const sendSolBatch = async (fromPrivateKey: string, recipients: string[],
                 err.message.includes('Too many requests') ||
                 err.message.includes('Rate limit')
             )) {
-                console.log("Rate limit or access error detected, switching endpoint...");
                 switchToNextEndpoint();
                 attempts++;
                 // Small delay before retry

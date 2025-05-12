@@ -19,7 +19,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
       toast.success('Settings saved successfully');
       onClose();
     } catch (error) {
-      console.error('Failed to save settings:', error);
       toast.error('Failed to save settings');
     }
   };

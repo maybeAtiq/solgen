@@ -22,7 +22,6 @@ const getKeyFromPassword = async (password: string, salt: Uint8Array) => {
         ['encrypt', 'decrypt']
       );
     } catch (error) {
-      console.error('Key derivation failed:', error);
       throw new Error('Failed to derive key from password');
     }
   };
@@ -44,7 +43,6 @@ const getKeyFromPassword = async (password: string, salt: Uint8Array) => {
       // Return as a string to ensure consistent storage
       return JSON.stringify(encryptedData);
     } catch (error) {
-      console.error('Encryption failed:', error);
       throw new Error('Failed to encrypt data');
     }
   };
@@ -56,7 +54,6 @@ const getKeyFromPassword = async (password: string, salt: Uint8Array) => {
       try {
         encryptedData = JSON.parse(encrypted);
       } catch (e) {
-        console.error('Failed to parse encrypted data:', e);
         throw new Error('Invalid encrypted data format');
       }
   
@@ -78,13 +75,11 @@ const getKeyFromPassword = async (password: string, salt: Uint8Array) => {
         return dec.decode(plainBuffer);
       } catch (error: any) {
         if (error.name === 'OperationError') {
-          console.error('Decryption operation failed (typically occurs with incorrect password or corrupted data):', error);
           throw new Error('Failed to decrypt data. Please restart SolGen.');
         }
         throw error;
       }
     } catch (error) {
-      console.error('Decryption failed:', error);
       throw new Error('Failed to decrypt data. Please restart SolGen.');
     }
   };
