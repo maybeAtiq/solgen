@@ -44,7 +44,7 @@ const WithdrawModal = ({
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center font-hand">
       <div className="bg-white rounded p-6 w-[300px] space-y-4">
-        <h2 className="text-lg font-semibold font-hand text-gray-200">Withdraw all funds</h2>
+        <h2 className="text-lg font-semibold font-hand text-gray-700">Withdraw all funds</h2>
         <input
           type="text"
           value={address}
