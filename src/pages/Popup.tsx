@@ -4,7 +4,7 @@ import { getSolBalance, sendSolBatch } from '../utils/solana-transfer';
 import { generateSeedPhrase, deriveSolanaWallets } from '../utils/solana';
 import { decryptData, encryptData } from '../utils/crypto';
 import { saveData, getData } from '../utils/storage';
-import { PlusCircle, FileDown, RefreshCwIcon, CopyIcon, RotateCw, ArrowUpRight, Trash2, X, Settings as SettingsIcon } from 'lucide-react';
+import { PlusCircle, FileDown, RefreshCwIcon, CopyIcon, RotateCw, ArrowUpRight, Trash2, X, Settings as SettingsIcon, Eye, EyeOff } from 'lucide-react';
 import RecoverModal from '../components/RecoverModal';
 import toast from 'react-hot-toast';
 import Spinner from '../components/Spinner';
@@ -77,6 +77,7 @@ const Popup = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [selectedSeed, setSelectedSeed] = useState<WalletData | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showSensitive, setShowSensitive] = useState<{ [seedIdx: number]: boolean }>({});
   const SESSION_TIMEOUT = 60000; // 1 minute in milliseconds
 
   useEffect(() => {
@@ -500,6 +501,14 @@ const Popup = () => {
     }
   };
 
+
+  const toggleShowSensitive = (seedIdx: number) => {
+    setShowSensitive(prev => ({
+      ...prev,
+      [seedIdx]: !prev[seedIdx]
+    }));
+  };
+
   return (
     <div className="p-4 w-full h-[600px] font-hand text-black space-y-4 bg-gradient-to-br from-purple-100 to-blue-100 overflow-y-scroll">
       {loading && <Spinner />}
@@ -626,14 +635,24 @@ const Popup = () => {
                     />
 
                 </div>
-              <p className="text-xs text-gray-700 break-words whitespace-pre-wrap font-inter">
-                {entry.seed.replace(' (imported)', '')}
-              </p>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-start justify-start gap-2">
+                <p className="text-xs text-gray-700 break-words whitespace-pre-wrap text-wrap font-inter">
+                  {showSensitive[idx] ? entry.seed.replace(' (imported)', '') : '***************************************************'}
+                </p>
+                <span className='gap-2 flex'>
+                {showSensitive[idx] ? 
+                  <EyeOff 
+                    className="w-3 h-3 text-textDark cursor-pointer" 
+                    onClick={() => toggleShowSensitive(idx)} /> 
+                    : 
+                  <Eye 
+                    className="w-3 h-3 text-textDark cursor-pointer" 
+                    onClick={() => toggleShowSensitive(idx)}/>}
                 <CopyIcon
                   className="w-3 h-3 text-textDark cursor-pointer"
-                  onClick={() => copyToClipboard(entry.seed)} 
+                  onClick={() => copyToClipboard(entry.seed)}
                 />
+                </span>
               </div>
               </div>
 
@@ -657,8 +676,11 @@ const Popup = () => {
                   </span>
                 </p>
                 <CopyIcon className="w-3 h-3 text-textDark cursor-pointer" onClick={() => copyToClipboard(w.address)} />
-                <p className="break-words"><strong>Private Key 🗝️:</strong> {w.privateKey}</p>
-                <CopyIcon className="w-3 h-3 text-textDark cursor-pointer" onClick={() => copyToClipboard(w.privateKey)} />
+                <p className="break-words">
+                  <strong>Private Key 🗝️:</strong>
+                  {showSensitive[idx] ? w.privateKey : '****************************************'}                
+                </p>
+                <CopyIcon className="w-3 h-3 text-textDark cursor-pointer ml-1" onClick={() => copyToClipboard(w.privateKey)} />
               </div>
             ))}
 
