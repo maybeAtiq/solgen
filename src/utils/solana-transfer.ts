@@ -104,7 +104,7 @@ export async function getSolBalance(address: string): Promise<number> {
             return balance / LAMPORTS_PER_SOL;
         } catch (err: any) {
             
-            // Check if this is a rate limit or forbidden error
+            // Checking if this is a rate limit or forbidden error
             if (err.message && (
                 err.message.includes('403') || 
                 err.message.includes('429') || 
@@ -114,7 +114,7 @@ export async function getSolBalance(address: string): Promise<number> {
             )) {
                 switchToNextEndpoint();
                 attempts++;
-                // Small delay before retry
+                // delay before retrying
                 await new Promise(resolve => setTimeout(resolve, 500));
                 continue;
             }

@@ -7,6 +7,27 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
+## Set-up
+
+1. Install the dependencies
+
+   ```sh
+   npm install or yarn
+   ```
+
+## Build and run for production
+
+1. Generate a full static production build
+
+   ```sh
+   npm run build
+   ```
+## Load extension in chrome
+
+1. Go to chrome://extensions/
+2. Click "Load unpacked" and navigate to project directory
+3. Select folder and run extension.
+
 ## RPC Keys Configuration
 
 This extension comes pre-configured with  Solana RPC endpoints. Users can use the extension immediately without needing to provide their own RPCs.
